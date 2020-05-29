@@ -1,6 +1,6 @@
 test:
   before_script:
-    - sudo apt-get install npm
+    - node -v
   script:
     - echo "Navigating to REACT app..."
     - cd visual-prog
