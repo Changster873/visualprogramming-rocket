@@ -1,4 +1,7 @@
 test:
+  before_script:
+  - npm install
+
   script:
     - echo "Navigating to REACT app..."
     - cd visual-prog
