@@ -12,9 +12,7 @@ dependencies:
   stage: build
   script:
     - cd visual-prog && npm install
-  artifacts:
-    paths:
-      - /visual-prog/node_modules
+    - npm install --save eslint
 
 test:
   stage: test
