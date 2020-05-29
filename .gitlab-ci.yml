@@ -6,16 +6,17 @@ stages:
 
 cache:
   paths:
-    - /visual-prog/node_modules
+    - /node_modules
 
 dependencies:
   stage: build
   script:
     - cd visual-prog && npm install
-    - npm install --save eslint
 
 test:
   stage: test
+  before_script:
+    - npm instalL --save eslint
   script:
     - echo "Navigating to REACT app..."
     - cd visual-prog
