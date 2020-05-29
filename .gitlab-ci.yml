@@ -1,9 +1,8 @@
 test:
-  before_script:
-  - npm install
-
   script:
     - echo "Navigating to REACT app..."
     - cd visual-prog
+    - echo "Installing NPM"
+    - npm install
     - echo "Running tests..."
     - npm run test
