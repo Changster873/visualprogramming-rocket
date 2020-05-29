@@ -4,10 +4,6 @@ stages:
   - build
   - test
 
-cache:
-  paths:
-    - /node_modules
-
 dependencies:
   stage: build
   script:
@@ -19,7 +15,5 @@ test:
     - cd visual-prog
     - npm install --save eslint
   script:
-    - echo "Navigating to REACT app..."
-    - cd visual-prog
     - echo "Running tests..."
     - npm run test
