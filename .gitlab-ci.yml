@@ -11,7 +11,7 @@ cache:
 dependencies:
   stage: build
   script:
-    - npm install
+    - cd visual-prog && npm install
   artifacts:
     paths:
       - /visual-prog/node_modules
