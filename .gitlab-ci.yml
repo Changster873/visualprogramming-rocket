@@ -1,10 +1,25 @@
+image: node:latest
+
+stages:
+  - build
+  - test
+
+cache:
+  paths:
+    - /visual-prog/node_modules
+
+dependencies:
+  stage: build
+  script:
+    - npm install
+  artifacts:
+    paths:
+      - /visual-prog/node_modules
+
 test:
-  before_script:
-    - node -v
+  stage: test
   script:
     - echo "Navigating to REACT app..."
     - cd visual-prog
-    - echo "Installing NPM"
-    - npm install
     - echo "Running tests..."
     - npm run test
