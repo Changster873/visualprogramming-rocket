@@ -16,7 +16,7 @@ dependencies:
 test:
   stage: test
   before_script:
-    - npm instalL --save eslint
+    - npm install --save eslint
   script:
     - echo "Navigating to REACT app..."
     - cd visual-prog
