@@ -1,3 +1,6 @@
 test:
   script:
-    - echo "running test..."
+    - echo "Navigating to REACT app..."
+    - cd visual-prog
+    - echo "Running tests..."
+    - npm run test
