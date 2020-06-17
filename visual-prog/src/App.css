@@ -1,38 +1,37 @@
-.App {
-  text-align: center;
+/* The whole page */
+.wrapper {
+  float: left;
+  background-color: #400101;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* Holds the blockly editor */
+.project-half-1 {
+  margin: 20px;
+  width: 1000px;
+  height: 1180px;
+  border: 5px solid black;
+  display: inline-block;
+  background-color: #F2C0A2;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* Holds the simulation */
+.project-half-2 {
+  margin: 20px;
+  margin-right: 40px;
+  width: 1400px;
+  height: 900px;
+  border: 5px solid black;
+  float: right;
+  background-color: white;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.project-commands {
+  border: 5px solid black;
+  float: right;
+  background-color: #F2C0A2;
+  margin: 20px;
+  margin-right: 40px;
+  width: 1440px;
+  height: 250px;
+  margin-top: -280px;
 }
