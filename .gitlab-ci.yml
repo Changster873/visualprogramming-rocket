@@ -7,12 +7,12 @@ stages:
 dependencies:
   stage: build
   script:
-    - cd visual-prog && npm install
+    - cd client && npm install
 
 test:
   stage: test
   before_script:
-    - cd visual-prog
+    - cd client
     - npm install --save eslint
   script:
     - echo "Running tests..."
