@@ -22,6 +22,7 @@ else {
     })
 }
 
+// the root of the server is reached
 app.get('/', (req, res) => {
     res.send('root reached');
 })
