@@ -1,23 +1,19 @@
 {
-  "name": "visual-prog",
+  "name": "client",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
-    "express": "^4.17.1",
     "react": "^16.13.1",
-    "react-blockly": "^5.0.0",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1"
   },
   "scripts": {
     "start": "react-scripts start",
-    "dev": "nodemon server.js",
-    "prod": "npm run dev && npm run start",
     "build": "react-scripts build",
-    "test": "eslint",
+    "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -34,10 +30,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "eslint": "^6.6.0",
-    "eslint-plugin-react": "^7.20.0",
-    "nodemon": "^2.0.4"
   }
 }

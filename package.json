@@ -1,0 +1,28 @@
+{
+  "name": "visual-prog",
+  "version": "1.0.0",
+  "description": "Rocket Game Simulation Controlled By Visual Programming",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "server": "nodemon server.js",
+    "client": "npm start --prefix client",
+    "client-install": "npm install --prefix client",
+    "dev": "concurrently \"npm run server\" && \"npm run client\"",
+    "heroku-postbuild": "npm install --prefix client && npm run build --prefix client"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.ecs.vuw.ac.nz/course-work/project489/2020/chheanchan/visual-programming-language.git"
+  },
+  "author": "Chansocheat Chheang",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^5.2.0",
+    "create-react-app": "^3.4.1",
+    "express": "^4.17.1",
+    "nodemon": "^2.0.4"
+  },
+  "proxy": "http://localhost:5000"
+}
