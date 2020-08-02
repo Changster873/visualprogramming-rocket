@@ -1,9 +1,40 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import Blockly from 'blockly';
+import Canvas from './Canvas';
 
 class Layout extends React.Component {
 
-    workspace;
+    workspace; // the visual block toolbox
+    defined = false; // if the custom blocks have been defined
+
+    /**
+     * Before components load, make them first.
+     */
+    componentWillMount() {
+        this.defineLaunch();
+        this.defined = true;
+    }
+
+    /**
+     * Define the Launch block.
+     */
+    defineLaunch() {
+
+        Blockly.Blocks['launch'] = {
+            init: function() {
+            this.appendDummyInput().appendField('Launch');
+              this.setNextStatement(true);
+              this.setPreviousStatement(false);
+              this.setColour(160);
+              this.setOutput(true, String)
+            }
+          };
+
+        Blockly.JavaScript['launch'] = function(block) {
+            var arg0 = Blockly.JavaScript.valueToCode(block, 'VALUE', Blockly.JavaScript.ORDER_FUNCTION_CALL) || '\'\'';
+            return ['var rocket = new Rocket(); \n rocket.launch()', Blockly.JavaScript.ORDER_MEMBER];
+        }
+    }
 
     /**
      * This method allows the workspace to convert blocks into code and display it.
@@ -15,6 +46,7 @@ class Layout extends React.Component {
     }
 
     render() {
+        console.log(this.defined);
         return (
             <div className="wrapper">
                 {/* blocks for visual programming */}
@@ -26,11 +58,12 @@ class Layout extends React.Component {
                     <block type="math_arithmetic"></block>
                     <block type="text"></block>
                     <block type="text_print"></block>
+                    { this.defined && <block type="launch"></block>}
                 </xml>
                 {/* visual editor */}
                 <div className="editor">
                     <div className="blocklyDiv" 
-                        style={{width: 1250, height: 1000}} 
+                        style={{width: 800, height: 1000}} 
                         ref={(ref) => {
                             this.workspace = Blockly.inject(ref,
                             {toolbox: document.getElementById('toolbox')});
@@ -44,12 +77,12 @@ class Layout extends React.Component {
                     {/* code generated from editor */}
                     <div style={{margin: 10}}>
                         <h1 style={{color: `grey`}}> Code Generated From Above </h1>
-                        <input id="code" style={{width: 1240, height: 200, fontSize: 36}} placeholder="None"/>
+                        <input id="code" style={{width: 800, height: 200, fontSize: 36}} placeholder="None"/>
                     </div>
                 </div>
                 {/* rocket game simulation */}
                 <div className="simulation">
-                    <h1> YES </h1>
+                    <Canvas />
                 </div>
             </div>
         );

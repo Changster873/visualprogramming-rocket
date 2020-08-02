@@ -15,3 +15,9 @@ The visual programming language will be implemented inside a web browser and the
 **Documentations:**
 
 *Important documentations can be found in the [Wiki](https://gitlab.ecs.vuw.ac.nz/course-work/project489/2020/chheanchan/visual-programming-language/-/wikis/home).*
+
+**To Execute Program:**
+
+Firstly, install the dependencies and save them using `npm install --save`.
+Next up is to install the client startup command using `npm run client-install`.
+To run the whole package, run the server using `npm run server` and lastly `npm run client` simultaneously.
