@@ -1,11 +1,13 @@
-.wrapper {
-  background-color: rgb(177, 137, 78);
+.elements {
+  position: relative;
+  background-color: black !important;
 }
 
 .editor {
   float: left;
+  position: absolute;
   width: 50%;
-  background-color: rgb(255, 194, 154);
+  background-color: black;
   margin: 10px;
   margin-block-start: 5px;
   border: 1px solid black;
@@ -16,6 +18,6 @@
   margin: 5px;
   margin-block-start: 5px;
   width: 48%;
-  background-color: rgb(135, 160, 182);
+  background-color: rgb(58, 55, 55);
   border: 1px solid black;
 }
