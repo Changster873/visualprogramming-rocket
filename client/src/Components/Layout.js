@@ -4,9 +4,7 @@ import Canvas from './Canvas';
 
 // fields to pass to the canvas to draw
 let fields = {
-    xChange: 0,
-    yChange: 0,
-    speed: 5,
+    speed: 1,
     ready: false,
     commands: []
 }
@@ -14,9 +12,6 @@ let fields = {
 // changing relevant fields and get canvas to draw it
 const changeFields = () => {
     fields.ready = true
-    fields.xChange += 100
-    fields.yChange += 0
-    fields.speed = 1;
 }
 
 class Layout extends React.Component {
@@ -56,6 +51,28 @@ class Layout extends React.Component {
                 this.setColour(160);
             }
         };
+
+        Blockly.Blocks['right'] = {
+            init: function() {
+                this.appendValueInput('VALUE')
+                    .setCheck('Number')
+                    .appendField('MoveRight')
+                this.setNextStatement(true);
+                this.setPreviousStatement(true);
+                this.setColour(160);
+            }
+        };
+
+        Blockly.Blocks['left'] = {
+            init: function() {
+                this.appendValueInput('VALUE')
+                    .setCheck('Number')
+                    .appendField('MoveLeft')
+                this.setNextStatement(true);
+                this.setPreviousStatement(true);
+                this.setColour(160);
+            }
+        };
     }
 
     /**
@@ -65,12 +82,16 @@ class Layout extends React.Component {
     javascriptGeneration(change) {
 
         // all the instructions in the blockly editor
-        var list = this.workspace.topBlocks_;
+        var obj = this.workspace.blockDB_;
+        var list = Object.values(obj);
         // re-initialise commands list so no duplicates of the same things when event is triggered
         fields.commands = []
-        // parse to get their types
+        // parse to get the blocks
         for (let i=0; i<list.length; i++) {
-            fields.commands.push(this.workspace.topBlocks_[i].type)
+            // dont add any value input blocks
+            if (list[i].type != "math_number") {
+                fields.commands.push(list[i])
+            }
         }
     }
 
@@ -89,6 +110,8 @@ class Layout extends React.Component {
                     <block type="math_number"></block>
                     { this.defined && <block type="launch"></block>}
                     { this.defined && <block type="speed"></block>}
+                    { this.defined && <block type="left"></block>}
+                    { this.defined && <block type="right"></block>}
                 </xml>
                 <div className="elements">
                     {/* visual editor */}
