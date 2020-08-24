@@ -20,6 +20,7 @@
   "license": "ISC",
   "dependencies": {
     "blockly": "^3.20200625.2",
+    "boostrap": "^2.0.0",
     "concurrently": "^5.2.0",
     "create-react-app": "^3.4.1",
     "express": "^4.17.1",

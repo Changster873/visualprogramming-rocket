@@ -10,11 +10,6 @@ let fields = {
     commands: []
 }
 
-// changing relevant fields and get canvas to draw it
-const changeFields = () => {
-    fields.ready = true
-}
-
 class Layout extends React.Component {
 
     workspace; // the visual block toolbox
@@ -26,6 +21,15 @@ class Layout extends React.Component {
     componentWillMount() {
         this.defineBlocks();
         this.defined = true;
+    }
+
+    /**
+     * Changing relevant fields and get canvas to draw it
+     */
+    changeFields() {
+        fields.ready = true;
+        fields.commands = []
+        this.javascriptGeneration()
     }
 
     /**
@@ -176,9 +180,9 @@ class Layout extends React.Component {
                                 {toolbox: document.getElementById('toolbox')});
                             }}
                             // content changes after dragging and dropping
-                            onMouseMove={() => this.javascriptGeneration()} 
-                            onClick={() => this.javascriptGeneration()}
-                            onBlur={() => this.javascriptGeneration()}
+                            // onMouseMove={() => this.javascriptGeneration()} 
+                            // onClick={() => this.javascriptGeneration()}
+                            // onBlur={() => this.javascriptGeneration()}
                             >
                         </div>
                         {/* code generated from editor
@@ -189,8 +193,8 @@ class Layout extends React.Component {
                     </div>
                     {/* rocket game simulation */}
                     <div className="simulation">
-                    <button style={{width: 100, zIndex: 10}} onClick={() => {changeFields();}}>Run/Start</button>
-                    <button style={{width: 100, zIndex: 10}} onClick={() => {fields.ready = false}}>Pause</button>
+                    <button type="button" className="btn btn-success" style={{width: 100, zIndex: 10}} onClick={() => {this.changeFields();}}>Run/Start</button>
+                    <button type="button" className="btn btn-primary" style={{width: 100, zIndex: 10}} onClick={() => {fields.ready = false}}>Pause</button>
                         <Canvas fields={fields}/>
                     </div>
                 </div>

@@ -8,7 +8,7 @@ const Canvas = props => {
     let index = 0; // index for current command being executed
     let time = 0; // duration of each action executed
     let angle = 0; // angle of the rocket, 0 is upwards
-    let angleChange = -1000;
+    let angleChange = -1000; // used to help angle turn slowly to user inpput value in the useEffect cycle without using useRef hook
 
     let x = 100 // inital x position of the rocket
     let y = 700 // initial y position of the rocket
@@ -60,6 +60,34 @@ const Canvas = props => {
             angle = 0;
             xspeed = yspeed = 1;
             window.alert(msg);
+        }
+
+        function checkVictory() {
+            let touchGround = false;
+            if (x >= 500 && x <= 600 && y >= 650) {
+                if (y < 700) y++;
+                if (y >= 700) {
+                    y = 700;
+                    touchGround = true;
+                }
+            }
+
+            if (touchGround) {
+                resetRocket('Stage Complete!!!');
+                props.fields.ready = false; // stop simulation
+                return;
+            }
+        }
+
+        function checkBoundaries() {
+            if (y > 700) {
+                resetRocket('Your rocket crashed, try again...');
+                props.fields.ready = false; // stop simulation
+            }
+            if (y < 0 || y > ctx.canvas.height || x < 0 || x > ctx.canvas.width) {
+                resetRocket('Rocket out of bounds! Resetting...');
+                props.fields.ready = false; // stop simulation
+            }
         }
         
         function update() {
@@ -113,9 +141,47 @@ const Canvas = props => {
             }
 
             else if (props.fields.commands[index].type === "stall") {
-                x += xspeed;
-                y -= yspeed;
-                console.log('Performing same action for this turn')
+                // if rocket is going right
+                if (angle > 0 && angle < 25) {
+                    x += 1;
+                    y -= yspeed;
+                }
+                else if (angle >= 25 && angle <= 90) {
+                    x += xspeed;
+                    if (angle !== 90) {
+                        y -= 1;
+                    }
+                }
+                else if (angle > 90 && angle < 120) {
+                    x += xspeed;
+                    y += 1;
+                }
+                else if (angle >= 120 && angle < 180) {
+                    x += 1;
+                    y += yspeed;
+                }
+
+                // if rocket is going left
+                if (angle < 0 && angle > -25) {
+                    x -= 1;
+                    y -= yspeed;
+                }
+                else if (angle <= -25 && angle >= -90) {
+                    x -= xspeed;
+                    if (angle !== -90) {
+                        y -= 1;
+                    }
+                }
+                else if (angle < -90 && angle > -120) {
+                    x -= xspeed;
+                    y += 1;
+                }
+                else if (angle < -120 && angle > 180) {
+                    x -= 1;
+                    y += yspeed;
+                }
+
+                console.log('Going in the same direction for this turn')
             }
 
             else if (props.fields.commands[index].type === "right") {
@@ -138,9 +204,8 @@ const Canvas = props => {
                 else if (angle === angleChange) {
                     angleChange = -1000;
                     time = 200;
-                } 
-                x += xspeed;
-                y -= yspeed;
+                }
+                
                 console.log('Turning right');
             }
 
@@ -168,8 +233,7 @@ const Canvas = props => {
                     angleChange = -1000;
                     time = 200;
                 } 
-                x -= xspeed;
-                y -= yspeed;
+                
                 console.log('Turning left')
             }
         }
@@ -207,26 +271,10 @@ const Canvas = props => {
             ctx.fillStyle = "green";
             ctx.fillRect(500, 750, 100, 10);
 
-            let touchGround = false;
-            if (x >= 500 && x <= 600 && y >= 650) {
-                if (y < 700) y++;
-                if (y >= 700) {
-                    y = 700;
-                    touchGround = true;
-                }
-            }
-
-            if (touchGround) {
-                resetRocket('Stage Complete!!!');
-                props.fields.ready = false; // stop simulation
-                return;
-            }
-            
-
-            if (y < 0 || y > ctx.canvas.height || x < 0 || x > ctx.canvas.width) {
-                resetRocket('Rocket out of bounds! Resetting...');
-                props.fields.ready = false; // stop simulation
-            }
+            // check if the player has successfully guided the rocket to the destination
+            checkVictory();
+            // check if the player has gone off the map or crashed
+            checkBoundaries();
         }
 
         // get the logics to be drawn on the canvas
