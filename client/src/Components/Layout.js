@@ -1,10 +1,11 @@
-import React, {useRef} from 'react';
+import React from 'react';
 import Blockly from 'blockly';
 import Canvas from './Canvas';
 
 // fields to pass to the canvas to draw
 let fields = {
-    speed: 1,
+    yspeed: 1,
+    xspeed: 1,
     ready: false,
     commands: []
 }
@@ -40,37 +41,86 @@ class Layout extends React.Component {
                 this.setColour(160);
             }
           };
-        
-        Blockly.Blocks['speed'] = {
+
+        Blockly.Blocks['stall'] = {
             init: function() {
-                this.appendValueInput('VALUE')
-                    .setCheck('Number')
-                    .appendField('Speed')
+                this.appendDummyInput().appendField('Stall');
                 this.setNextStatement(true);
                 this.setPreviousStatement(true);
                 this.setColour(160);
             }
         };
+
+        Blockly.Blocks['descend'] = {
+            init: function() {
+                this.appendDummyInput().appendField('Descend');
+                this.setNextStatement(true);
+                this.setPreviousStatement(true);
+                this.setColour(160);
+            }
+        };
+        
+        Blockly.Blocks['yspeed'] = {
+            init: function() {
+                this.appendValueInput('VALUE')
+                    .setCheck('Number')
+                    .appendField('Y Speed')
+                this.setNextStatement(true);
+                this.setPreviousStatement(true);
+                this.setColour(160);
+            }
+        };
+
+        Blockly.Blocks['xspeed'] = {
+            init: function() {
+                this.appendValueInput('VALUE')
+                    .setCheck('Number')
+                    .appendField('X Speed')
+                this.setNextStatement(true);
+                this.setPreviousStatement(true);
+                this.setColour(160);
+            }
+        };
+
+        let right = {
+            "type": "right",
+            "message0": 'Turn Right %1 Degrees',
+            "args0": [
+              {
+                "type": "input_value",
+                "name": "VALUE",
+                "check": "Number"
+              }
+            ],
+            "colour": 160,
+          }
+
+          let left = {
+            "type": "left",
+            "message0": 'Turn Left %1 Degrees',
+            "args0": [
+              {
+                "type": "input_value",
+                "name": "VALUE",
+                "check": "Number"
+              }
+            ],
+            "colour": 160,
+          }
 
         Blockly.Blocks['right'] = {
             init: function() {
-                this.appendValueInput('VALUE')
-                    .setCheck('Number')
-                    .appendField('MoveRight')
-                this.setNextStatement(true);
+                this.jsonInit(right);
                 this.setPreviousStatement(true);
-                this.setColour(160);
+                this.setNextStatement(true);
             }
-        };
+        }
 
         Blockly.Blocks['left'] = {
             init: function() {
-                this.appendValueInput('VALUE')
-                    .setCheck('Number')
-                    .appendField('MoveLeft')
-                this.setNextStatement(true);
+                this.jsonInit(left);
                 this.setPreviousStatement(true);
-                this.setColour(160);
+                this.setNextStatement(true);
             }
         };
     }
@@ -79,7 +129,7 @@ class Layout extends React.Component {
      * This method allows the workspace to convert blocks into code and display it.
      * @param {*} change 
      */
-    javascriptGeneration(change) {
+    javascriptGeneration() {
 
         // all the instructions in the blockly editor
         var obj = this.workspace.blockDB_;
@@ -89,7 +139,7 @@ class Layout extends React.Component {
         // parse to get the blocks
         for (let i=0; i<list.length; i++) {
             // dont add any value input blocks
-            if (list[i].type != "math_number") {
+            if (list[i].type !== "math_number") {
                 fields.commands.push(list[i])
             }
         }
@@ -109,9 +159,12 @@ class Layout extends React.Component {
                     <block type="text_print"></block> */}
                     <block type="math_number"></block>
                     { this.defined && <block type="launch"></block>}
-                    { this.defined && <block type="speed"></block>}
+                    { this.defined && <block type="yspeed"></block>}
+                    { this.defined && <block type="xspeed"></block>}
                     { this.defined && <block type="left"></block>}
                     { this.defined && <block type="right"></block>}
+                    { this.defined && <block type="stall"></block>}
+                    { this.defined && <block type="descend"></block>}
                 </xml>
                 <div className="elements">
                     {/* visual editor */}
@@ -128,11 +181,11 @@ class Layout extends React.Component {
                             onBlur={() => this.javascriptGeneration()}
                             >
                         </div>
-                        {/* code generated from editor */}
+                        {/* code generated from editor
                         <div style={{margin: 10}}>
                             <h1 style={{color: `grey`}}> Code Generated From Above </h1>
                             <input id="code" style={{width: 800, height: 200, fontSize: 36}} placeholder="None"/>
-                        </div>
+                        </div> */}
                     </div>
                     {/* rocket game simulation */}
                     <div className="simulation">
