@@ -4,9 +4,8 @@ import Canvas from './Canvas';
 
 // fields to pass to the canvas to draw
 let fields = {
-    yspeed: 1,
-    xspeed: 1,
     ready: false,
+    imageReady: false,
     commands: []
 }
 
@@ -48,7 +47,7 @@ class Layout extends React.Component {
 
         Blockly.Blocks['stall'] = {
             init: function() {
-                this.appendDummyInput().appendField('Stall');
+                this.appendDummyInput().appendField('Stall Turn');
                 this.setNextStatement(true);
                 this.setPreviousStatement(true);
                 this.setColour(160);
@@ -71,7 +70,7 @@ class Layout extends React.Component {
                     .appendField('Y Speed')
                 this.setNextStatement(true);
                 this.setPreviousStatement(true);
-                this.setColour(160);
+                this.setColour(70);
             }
         };
 
@@ -82,7 +81,7 @@ class Layout extends React.Component {
                     .appendField('X Speed')
                 this.setNextStatement(true);
                 this.setPreviousStatement(true);
-                this.setColour(160);
+                this.setColour(70);
             }
         };
 
@@ -96,7 +95,7 @@ class Layout extends React.Component {
                 "check": "Number"
               }
             ],
-            "colour": 160,
+            "colour": 0,
           }
 
           let left = {
@@ -109,7 +108,7 @@ class Layout extends React.Component {
                 "check": "Number"
               }
             ],
-            "colour": 160,
+            "colour": 0,
           }
 
         Blockly.Blocks['right'] = {
@@ -161,20 +160,34 @@ class Layout extends React.Component {
                     <block type="math_arithmetic"></block>
                     <block type="text"></block>
                     <block type="text_print"></block> */}
-                    <block type="math_number"></block>
-                    { this.defined && <block type="launch"></block>}
-                    { this.defined && <block type="yspeed"></block>}
-                    { this.defined && <block type="xspeed"></block>}
-                    { this.defined && <block type="left"></block>}
-                    { this.defined && <block type="right"></block>}
-                    { this.defined && <block type="stall"></block>}
-                    { this.defined && <block type="descend"></block>}
+                    <category name="Major Rocket Commands" colour="160">
+                        { this.defined && <block type="launch"></block>}
+                        { this.defined && <block type="stall"></block>}
+                        { this.defined && <block type="descend"></block>}
+                    </category>
+
+                    <category name="Set Rocket Speed" colour="70">
+                        { this.defined && <block type="yspeed"></block>}
+                        { this.defined && <block type="xspeed"></block>}
+                    </category>
+                    <category name="Turning Rocket" colour="0">
+                        { this.defined && <block type="left"></block>}
+                        { this.defined && <block type="right"></block>}
+                    </category>
+                    
+                    <category name="Value Input" colour="230">
+                        <block type="math_number"></block>
+                    </category>
+                    <category name="Conditionals" colour="200">
+                        
+                    </category>
+
                 </xml>
                 <div className="elements">
                     {/* visual editor */}
                     <div className="editor">
                         <div className="blocklyDiv" 
-                            style={{width: 800, height: 1000}} 
+                            style={{width: `100%`, height: 1000}} 
                             ref={(ref) => {
                                 this.workspace = Blockly.inject(ref,
                                 {toolbox: document.getElementById('toolbox')});
@@ -193,9 +206,14 @@ class Layout extends React.Component {
                     </div>
                     {/* rocket game simulation */}
                     <div className="simulation">
-                    <button type="button" className="btn btn-success" style={{width: 100, zIndex: 10}} onClick={() => {this.changeFields();}}>Run/Start</button>
-                    <button type="button" className="btn btn-primary" style={{width: 100, zIndex: 10}} onClick={() => {fields.ready = false}}>Pause</button>
-                        <Canvas fields={fields}/>
+                        <div style={{display: 'flex', zIndex: 10, marginBottom: 5}}>
+                            <button type="button" className="btn btn-success" style={{width: 100, height: 33, zIndex: 10, marginRight: 3, marginLeft: 3, margin: 2, fontFamily: `Arial`, fontWeight: `bolder`}} onClick={() => {this.changeFields();}}>Run</button>
+                            <button type="button" className="btn btn-primary" style={{width: 100, height: 33, zIndex: 10, marginRight: 3, marginLeft: 3, margin: 2, fontFamily: `Arial`, fontWeight: `bolder`}} onClick={() => {fields.ready = false}}>Pause</button>
+                        </div>
+                        <Canvas id="canvas" fields={fields}/>
+                        <img id="rocket" src="https://webstockreview.net/images/clipart-rocket-animation-12.png" width="30" height="50" hidden onload={() => {fields.imageReady = true}}></img>
+                        <img id="grass" src="https://freesvg.org/img/grass-layered.png" width="20" height="20" hidden onload={() => {fields.imageReady = true}}></img>
+                        <img id="ground" src="https://t3.ftcdn.net/jpg/02/57/58/20/240_F_257582025_LUf6zGRPA0x0OGaLFS1UJIgkRKrrZhAk.jpg" width="20" height="20" hidden onload={() => {fields.imageReady = true}}></img>
                     </div>
                 </div>
                 
