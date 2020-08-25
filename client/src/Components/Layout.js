@@ -62,26 +62,46 @@ class Layout extends React.Component {
                 this.setColour(160);
             }
         };
+
+        let yspeed = {
+            "type": "yspeed",
+            "message0": 'Y Speed %1 km/h',
+            "args0": [
+              {
+                "type": "input_value",
+                "name": "VALUE",
+                "check": "Number"
+              }
+            ],
+            "colour": 70,
+          }
+
+          let xspeed = {
+            "type": "xspeed",
+            "message0": 'X Speed %1 km/h',
+            "args0": [
+              {
+                "type": "input_value",
+                "name": "VALUE",
+                "check": "Number"
+              }
+            ],
+            "colour": 70,
+          }
         
         Blockly.Blocks['yspeed'] = {
             init: function() {
-                this.appendValueInput('VALUE')
-                    .setCheck('Number')
-                    .appendField('Y Speed')
+                this.jsonInit(yspeed)
                 this.setNextStatement(true);
                 this.setPreviousStatement(true);
-                this.setColour(70);
             }
         };
 
         Blockly.Blocks['xspeed'] = {
             init: function() {
-                this.appendValueInput('VALUE')
-                    .setCheck('Number')
-                    .appendField('X Speed')
+                this.jsonInit(xspeed)
                 this.setNextStatement(true);
                 this.setPreviousStatement(true);
-                this.setColour(70);
             }
         };
 
@@ -135,7 +155,7 @@ class Layout extends React.Component {
     javascriptGeneration() {
 
         // all the instructions in the blockly editor
-        var obj = this.workspace.blockDB_;
+        var obj = this.workspace.getAllBlocks();
         var list = Object.values(obj);
         // re-initialise commands list so no duplicates of the same things when event is triggered
         fields.commands = []
@@ -184,6 +204,9 @@ class Layout extends React.Component {
 
                 </xml>
                 <div className="elements">
+                    <div className="cover">
+                        <img width="1" height="1" alt=""></img>
+                    </div>
                     {/* visual editor */}
                     <div className="editor">
                         <div className="blocklyDiv" 

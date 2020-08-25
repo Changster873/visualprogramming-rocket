@@ -8,15 +8,17 @@ const Canvas = props => {
     let index = 0; // index for current command being executed
     let time = 0; // duration of each action executed
     let angleChange = -1000; // used to help angle turn slowly to user inpput value in the useEffect cycle without using useRef hook
+    let currentAction;
 
     // properties of the rocket
     let x = 100 // inital x position of the rocket
     let y = 700 // initial y position of the rocket
-    let yspeed = 1; // moving y speed of the rocket
-    let xspeed = 1; // moving x speed of the rocket
+    let yspeed = 100; // moving y speed of the rocket
+    let xspeed = 100; // moving x speed of the rocket
     let fuel = 100; // fuel of the rocket
     let wind = 0; // wind of this level
     let angle = 0; // angle of the rocket, 0 is upwards
+    let gravity = 0; // gravity (external force pulling on the rocket)
 
     useEffect(() => {
 
@@ -29,6 +31,11 @@ const Canvas = props => {
             // (e.g. turnRight, so call method update with turnRight if statement branch executed, etc...)
 
             setTimeout(()=> {
+                if (props.fields.commands[index] === undefined && index !== 0){
+                    resetRocket('Did not reach destination, try again...')
+                    props.fields.ready = false;
+                }
+                currentAction = props.fields.commands[index]
                 // if there is an action, begin executing
                 if (index !== props.fields.commands.length) update();
                 // draw everything the action has specified
@@ -48,7 +55,7 @@ const Canvas = props => {
         }
 
         function fuelCost() {
-            fuel -= (yspeed + xspeed) * 0.008;
+            fuel -= ((yspeed + xspeed)/100) * 0.008;
         }
 
         function resetRocket(msg) {
@@ -59,11 +66,20 @@ const Canvas = props => {
             y = 700;
             angle = 0;
             fuel = 100;
-            xspeed = yspeed = 1;
+            xspeed = yspeed = 100;
+            currentAction = undefined
             window.alert(msg);
         }
 
         function checkVictory() {
+
+            if (fuel <= 0) {
+                fuel = 0;
+                resetRocket('Rocket out of fuel, try again...')
+                props.fields.ready = false; // stop simulation
+                return false;
+            }
+
             let touchGround = false;
             if (x >= 500 && x <= 600 && y >= 650) {
                 if (y < 700) y++;
@@ -105,14 +121,14 @@ const Canvas = props => {
             if (!props.fields.ready && props.fields.commands.length > 0) return;
 
             if (props.fields.commands[index].type === "launch") {
-                y -= yspeed;
+                y -= (yspeed/100);
                 // cut fuel for this action
                 fuelCost();
                 console.log('Launching rocket...')
             }
 
             else if (props.fields.commands[index].type === "descend") {
-                y += yspeed;
+                y += (yspeed/100);
                 // cut fuel for this action
                 fuelCost();
                 console.log("Descending rocket...")
@@ -148,42 +164,51 @@ const Canvas = props => {
             else if (props.fields.commands[index].type === "stall") {
                 // if rocket is going right
                 if (angle > 0 && angle < 25) {
+                    xspeed = 100
                     x += 1;
-                    y -= yspeed;
+                    y -= (yspeed/100);
                 }
                 else if (angle >= 25 && angle <= 90) {
-                    x += xspeed;
+                    x += (xspeed/100);
                     if (angle !== 90) {
                         y -= 1;
+                        yspeed = 100
                     }
                 }
                 else if (angle > 90 && angle < 120) {
-                    x += xspeed;
+                    x += (xspeed/100);
                     y += 1;
+                    yspeed = 100
+
                 }
                 else if (angle >= 120 && angle < 180) {
                     x += 1;
-                    y += yspeed;
+                    y += (yspeed/100);
+                    xspeed = 100
                 }
 
                 // if rocket is going left
                 if (angle < 0 && angle > -25) {
                     x -= 1;
-                    y -= yspeed;
+                    xspeed = 100
+                    y -= (yspeed/100);
                 }
                 else if (angle <= -25 && angle >= -90) {
-                    x -= xspeed;
+                    x -= (xspeed/100);
                     if (angle !== -90) {
                         y -= 1;
+                        yspeed = 100
                     }
                 }
                 else if (angle < -90 && angle > -120) {
-                    x -= xspeed;
+                    x -= (xspeed/100);
                     y += 1;
+                    yspeed = 100
                 }
                 else if (angle < -120 && angle > 180) {
                     x -= 1;
-                    y += yspeed;
+                    y += (yspeed/100);
+                    xspeed = 100
                 }
 
                 // cut fuel of this action
@@ -254,16 +279,31 @@ const Canvas = props => {
             // clear the canvas before drawing new frame
             ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
 
+            // draw measurements for players to refer to
+            ctx.fillStyle = 'purple'
+            for (let i=0; i<955; i+=200) {
+                ctx.fillRect(0, i, 10, 195)
+                ctx.fillStyle = 'white'
+                ctx.fillRect(0, i+95, 10, 5)
+                ctx.fillStyle = 'purple'
+            }
+            for (let i=0; i<915; i+=200) {
+                ctx.fillRect(i, 0, 195, 10)
+                ctx.fillStyle = 'white'
+                ctx.fillRect(i+95, 0, 5, 10)
+                ctx.fillStyle = 'purple'
+            }
+
             // have the rocket status displayed
             ctx.fillStyle = 'white';
             ctx.font = '20px Arial';
             ctx.fillText('Angle: ' + angle, 10, 25);
 
-            ctx.fillText('X Speed: ' + xspeed, 10 , 55)
-            ctx.fillText('Y Speed: ' + yspeed, 10 , 85)
+            ctx.fillText('X Speed: ' + xspeed + 'km/h', 10 , 55)
+            ctx.fillText('Y Speed: ' + yspeed + 'km/h', 10 , 85)
 
             ctx.fillRect(237, 5, 100, 25)
-            ctx.fillText('Fuel: ' + Math.round(fuel), 150, 25);
+            ctx.fillText('Fuel: ' + Math.floor(fuel), 150, 25);
             if (fuel >= 0 && fuel < 35) {
                 ctx.fillStyle = 'red'
             }
@@ -281,6 +321,11 @@ const Canvas = props => {
             // have the level conditions displayed
             ctx.fillStyle = 'white'
             ctx.fillText('Wind: ' + wind, 820, 25);
+            ctx.fillText('Gravity: ' + gravity, 700, 25);
+
+            // display the current action
+            ctx.fillText('Current action: ' , 400, 25)
+            ctx.fillText((currentAction ? currentAction : 'None'), 400, 55)
             
             // draw the ground
             let img2 = document.getElementById('grass')
