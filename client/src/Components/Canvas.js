@@ -31,6 +31,14 @@ const Canvas = props => {
             // (e.g. turnRight, so call method update with turnRight if statement branch executed, etc...)
 
             setTimeout(()=> {
+                // set the conditions for the level
+                if (props.fields.level === 1) {
+                    wind = gravity = 0;
+                }
+                else if (props.fields.level === 2) {
+                    wind = 0.3; // 30km/h
+                    gravity = 0.3528; // 9.18m/s but for km/h
+                }
                 if (props.fields.commands[index] === undefined && index !== 0){
                     resetRocket('Did not reach destination, try again...')
                     props.fields.ready = false;
@@ -80,27 +88,63 @@ const Canvas = props => {
                 return false;
             }
 
-            let touchGround = false;
-            if (x >= 500 && x <= 600 && y >= 650) {
-                if (y < 700) y++;
-                if (y >= 700) {
-                    y = 700;
-                    touchGround = true;
+            // level one
+            if (props.fields.level === 1) {
+                let touchGround = false;
+                if (x >= 500 && x <= 600 && y >= 650) {
+                    if (y < 700) y++;
+                    if (y >= 700) {
+                        y = 700;
+                        touchGround = true;
+                    }
+                }
+
+                if (touchGround) {
+                    resetRocket('Stage Complete!!!');
+                    props.fields.ready = false; // stop simulation
+                    return true;
                 }
             }
 
-            if (touchGround) {
-                resetRocket('Stage Complete!!!');
-                props.fields.ready = false; // stop simulation
-                return true;
+            // level two
+            if (props.fields.level === 2) {
+                let touchGround = false;
+                if (x >= 700 && x <= 800 && y >= 650) {
+                    if (y < 700) y++;
+                    if (y >= 700) {
+                        y = 700;
+                        touchGround = true;
+                    }
+                }
+
+                if (touchGround) {
+                    resetRocket('Stage Complete!!!');
+                    props.fields.ready = false; // stop simulation
+                    return true;
+                }
             }
         }
 
         function checkBoundaries() {
-            if (y >= 700) {
-                resetRocket('Your rocket crashed, try again...');
-                props.fields.ready = false; // stop simulation
+            // level one
+            if (props.fields.level === 1) {
+                if (y >= 700) {
+                    resetRocket('Your rocket crashed, try again...');
+                    props.fields.ready = false; // stop simulation
+                }
             }
+            // level two
+            else if (props.fields.level === 2) {
+                if (y >= 700) {
+                    resetRocket('Your rocket crashed, try again...');
+                    props.fields.ready = false; // stop simulation
+                }
+                if (x >= 350 && y >= 415 && y <= 700 && x < 600) {
+                    resetRocket('Your rocket crashed, try again...');
+                    props.fields.ready = false; // stop simulation
+                }
+            }
+
             if (y < 0 || y > ctx.canvas.height || x < 0 || x > ctx.canvas.width) {
                 resetRocket('Rocket out of bounds! Resetting...');
                 props.fields.ready = false; // stop simulation
@@ -122,13 +166,16 @@ const Canvas = props => {
 
             if (props.fields.commands[index].type === "launch") {
                 y -= (yspeed/100);
+                y += gravity;
+                x += wind;
                 // cut fuel for this action
                 fuelCost();
                 console.log('Launching rocket...')
             }
 
             else if (props.fields.commands[index].type === "descend") {
-                y += (yspeed/100);
+                x += wind;
+                y += ((yspeed/100)+gravity);
                 // cut fuel for this action
                 fuelCost();
                 console.log("Descending rocket...")
@@ -162,53 +209,81 @@ const Canvas = props => {
             }
 
             else if (props.fields.commands[index].type === "stall") {
+                let initial = 0;
                 // if rocket is going right
-                if (angle > 0 && angle < 25) {
-                    xspeed = 100
-                    x += 1;
+                if (angle > 0 && angle < 55) {
+                    initial = xspeed
+                    x += ((xspeed/2)/100);
+                    x += wind;
+                    xspeed = initial
                     y -= (yspeed/100);
+                    y += gravity;
                 }
-                else if (angle >= 25 && angle <= 90) {
+                else if (angle >= 55 && angle <= 90) {
                     x += (xspeed/100);
+                    x += wind;
                     if (angle !== 90) {
-                        y -= 1;
-                        yspeed = 100
+                        initial = yspeed
+                        y -= ((yspeed/2)/100);
+                        y += gravity;
+                        yspeed = initial
                     }
                 }
                 else if (angle > 90 && angle < 120) {
+                    initial = yspeed
                     x += (xspeed/100);
-                    y += 1;
-                    yspeed = 100
+                    x += wind;
+                    y += (((yspeed/2)/100)+gravity);
+                    yspeed = initial
 
                 }
                 else if (angle >= 120 && angle < 180) {
-                    x += 1;
-                    y += (yspeed/100);
-                    xspeed = 100
+                    initial = xspeed
+                    x += ((xspeed/2)/100);
+                    x += wind;
+                    xspeed = initial
+                    y += ((yspeed/100)+gravity);
                 }
 
                 // if rocket is going left
-                if (angle < 0 && angle > -25) {
-                    x -= 1;
-                    xspeed = 100
+                if (angle < 0 && angle > -55) {
+                    initial = xspeed
+                    x -= ((xspeed/2)/100);
+                    x += wind;
                     y -= (yspeed/100);
+                    y += gravity;
+                    xspeed = initial
                 }
-                else if (angle <= -25 && angle >= -90) {
+                else if (angle <= -55 && angle >= -90) {
                     x -= (xspeed/100);
+                    x += wind;
                     if (angle !== -90) {
-                        y -= 1;
-                        yspeed = 100
+                        initial = yspeed
+                        y -= (((yspeed/2)/100));
+                        y += gravity;
+                        yspeed = initial
                     }
                 }
                 else if (angle < -90 && angle > -120) {
+                    initial = yspeed
                     x -= (xspeed/100);
-                    y += 1;
-                    yspeed = 100
+                    x += wind;
+                    y += (((yspeed/2)/100)+gravity);
+                    yspeed = initial
                 }
-                else if (angle < -120 && angle > 180) {
-                    x -= 1;
-                    y += (yspeed/100);
-                    xspeed = 100
+                else if (angle <= -120 && angle > 180) {
+                    initial = xspeed
+                    x -= ((xspeed/2)/100);
+                    x += wind;
+                    y += ((yspeed/100)+gravity);
+                    xspeed = initial
+                }
+                
+                // if rocket just points straight upwards
+                else if (angle === 0){
+                    y -= (yspeed/100);
+                    y += gravity;
+                    x += wind;
                 }
 
                 // cut fuel of this action
@@ -320,22 +395,60 @@ const Canvas = props => {
 
             // have the level conditions displayed
             ctx.fillStyle = 'white'
-            ctx.fillText('Wind: ' + wind, 820, 25);
-            ctx.fillText('Gravity: ' + gravity, 700, 25);
+            ctx.fillText('Wind: ' + wind*100, 820, 25);
+            ctx.fillText('Gravity: ' + gravity*100, 680, 25);
+            ctx.fillText('Level: ' + props.fields.level, 580, 25)
 
             // display the current action
             ctx.fillText('Current action: ' , 400, 25)
             ctx.fillText((currentAction ? currentAction : 'None'), 400, 55)
             
-            // draw the ground
-            let img2 = document.getElementById('grass')
-            let img3 = document.getElementById('ground')
-            for (let i=0;i<915; i+=10) {
-                ctx.drawImage(img2, i, 745, 20, 20)
-                for (let j=765; j<955; j+=10) {
-                    ctx.drawImage(img3, i, j, 20, 20)
+            if (props.fields.level === 1) {
+                // draw the ground
+                let img2 = document.getElementById('grass')
+                let img3 = document.getElementById('ground')
+                for (let i=0;i<915; i+=10) {
+                    ctx.drawImage(img2, i, 745, 20, 20)
+                    for (let j=765; j<955; j+=10) {
+                        ctx.drawImage(img3, i, j, 20, 20)
+                    }
                 }
+
+                // mark the destination spot
+                ctx.fillStyle = "red";
+                ctx.fillRect(500, 750, 100, 10);
             }
+
+            if (props.fields.level === 2) {
+                // draw the ground
+                let img2 = document.getElementById('grass')
+                let img3 = document.getElementById('ground')
+                for (let i=0;i<400; i+=10) {
+                    ctx.drawImage(img2, i, 745, 20, 20)
+                    for (let j=765; j<955; j+=10) {
+                        ctx.drawImage(img3, i, j, 20, 20)
+                    }
+                }
+
+                for (let i=400;i<599; i+=10) {
+                    ctx.drawImage(img2, i, 445, 20, 20)
+                    for (let j=465; j<955; j+=10) {
+                        ctx.drawImage(img3, i, j, 20, 20)
+                    }
+                }
+
+                for (let i=600;i<915; i+=10) {
+                    ctx.drawImage(img2, i, 745, 20, 20)
+                    for (let j=765; j<955; j+=10) {
+                        ctx.drawImage(img3, i, j, 20, 20)
+                    }
+                }
+
+                // mark the destination spot
+                ctx.fillStyle = "red";
+                ctx.fillRect(700, 750, 100, 10);
+            }
+            
             
             // draw the rocket
             ctx.fillStyle = '#ff8080';
@@ -360,10 +473,6 @@ const Canvas = props => {
                 }
             }
             ctx.restore()
-
-            // mark the destination spot
-            ctx.fillStyle = "red";
-            ctx.fillRect(500, 750, 100, 10);
 
             // check these only when the game is running
             if (props.fields.ready) {

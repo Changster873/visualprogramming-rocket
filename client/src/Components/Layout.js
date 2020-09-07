@@ -6,6 +6,7 @@ import Canvas from './Canvas';
 let fields = {
     ready: false,
     imageReady: false,
+    level: 1,
     commands: []
 }
 
@@ -42,15 +43,17 @@ class Layout extends React.Component {
                 this.setNextStatement(true);
                 this.setPreviousStatement(false);
                 this.setColour(160);
+                this.setTooltip('Projects the rocket upwards at 100km/h vertically. Starts the rocket. Lasts for 3 seconds.');
             }
           };
 
         Blockly.Blocks['stall'] = {
             init: function() {
-                this.appendDummyInput().appendField('Stall Turn');
+                this.appendDummyInput().appendField('Accelerate');
                 this.setNextStatement(true);
                 this.setPreviousStatement(true);
                 this.setColour(160);
+                this.setTooltip('Proceed accelerating in the direction that the rocket is facing. Lasts for 3 seconds.');
             }
         };
 
@@ -60,6 +63,7 @@ class Layout extends React.Component {
                 this.setNextStatement(true);
                 this.setPreviousStatement(true);
                 this.setColour(160);
+                this.setTooltip('Drop vertically at the specified vertical speed of the rocket. Lasts for 3 seconds.');
             }
         };
 
@@ -94,6 +98,7 @@ class Layout extends React.Component {
                 this.jsonInit(yspeed)
                 this.setNextStatement(true);
                 this.setPreviousStatement(true);
+                this.setTooltip('Sets the vertical speed of the rocket. This is not an action command, hence its completion is instantaneous.');
             }
         };
 
@@ -102,6 +107,7 @@ class Layout extends React.Component {
                 this.jsonInit(xspeed)
                 this.setNextStatement(true);
                 this.setPreviousStatement(true);
+                this.setTooltip('Sets the horizontal speed of the rocket. This is not an action command, hence its completion is instantaneous.');
             }
         };
 
@@ -136,6 +142,7 @@ class Layout extends React.Component {
                 this.jsonInit(right);
                 this.setPreviousStatement(true);
                 this.setNextStatement(true);
+                this.setTooltip('Turns the rocket in the clockwise direction until the angle is as specified by the input value. Lasts until the goal angle is reached.');
             }
         }
 
@@ -144,6 +151,7 @@ class Layout extends React.Component {
                 this.jsonInit(left);
                 this.setPreviousStatement(true);
                 this.setNextStatement(true);
+                this.setTooltip('Turns the rocket in the anti-clockwise direction until the angle is as specified by the input value. Lasts until the goal angle is reached.');
             }
         };
     }
@@ -199,7 +207,8 @@ class Layout extends React.Component {
                         <block type="math_number"></block>
                     </category>
                     <category name="Conditionals" colour="200">
-                        
+                        <block type="controls_if"></block>
+                        <block type="logic_compare"></block>
                     </category>
 
                 </xml>
@@ -232,6 +241,8 @@ class Layout extends React.Component {
                         <div style={{display: 'flex', zIndex: 10, marginBottom: 5}}>
                             <button type="button" className="btn btn-success" style={{width: 100, height: 33, zIndex: 10, marginRight: 3, marginLeft: 3, margin: 2, fontFamily: `Arial`, fontWeight: `bolder`}} onClick={() => {this.changeFields();}}>Run</button>
                             <button type="button" className="btn btn-primary" style={{width: 100, height: 33, zIndex: 10, marginRight: 3, marginLeft: 3, margin: 2, fontFamily: `Arial`, fontWeight: `bolder`}} onClick={() => {fields.ready = false}}>Pause</button>
+                            <button type="button" className="btn btn-info" style={{width: 150, height: 33, zIndex: 10, marginRight: 3, margin: 2, marginLeft: 390, fontFamily: `Arial`, fontWeight: `bolder`}} onClick={() => {if (fields.level > 1) fields.level -= 1}}>Prev Level</button>
+                            <button type="button" className="btn btn-info" style={{width: 150, height: 33, zIndex: 10, marginRight: 3, margin: 2, marginLeft: 10, fontFamily: `Arial`, fontWeight: `bolder`}} onClick={() => {if (fields.level < 3) fields.level += 1}}>Next Level</button>
                         </div>
                         <Canvas id="canvas" fields={fields}/>
                         <img id="rocket" src="https://webstockreview.net/images/clipart-rocket-animation-12.png" width="30" height="50" hidden onload={() => {fields.imageReady = true}}></img>
